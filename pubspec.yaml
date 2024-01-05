@@ -17,6 +17,8 @@ dependencies:
   equatable: ^2.0.5
   json_annotation: ^4.8.1
   uuid: ^4.2.2
+  rxdart: ^0.27.5
+  realm: ^1.6.1
 
 dev_dependencies:
   bloc_test: ^9.1.4
