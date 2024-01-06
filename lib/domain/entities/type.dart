@@ -15,6 +15,6 @@ class TypeConverter extends JsonConverter<Type, String> {
 
   @override
   String toJson(Type type) {
-    return type.toString();
+    return type.name;
   }
 }

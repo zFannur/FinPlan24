@@ -6,6 +6,7 @@ part 'operation_dto.g.dart';
 class _OperationDto {
   @PrimaryKey()
   late String id;
+  late DateTime date;
   late String type;
   late String category;
   late int sum;

@@ -9,6 +9,7 @@ part 'operation.g.dart';
 class Operation extends Equatable {
   Operation({
     required this.type,
+    required this.date,
     required this.category,
     required this.sum,
     required this.subCategory,
@@ -17,6 +18,7 @@ class Operation extends Equatable {
   }) : id = id ?? const Uuid().v4();
 
   final String id;
+  final DateTime date;
   @TypeConverter()
   final Type type;
   final String category;
@@ -26,6 +28,7 @@ class Operation extends Equatable {
 
   Operation copyWith({
     String? id,
+    DateTime? date,
     Type? type,
     String? category,
     int? sum,
@@ -34,6 +37,7 @@ class Operation extends Equatable {
   }) {
     return Operation(
       id: id ?? this.id,
+      date: date ?? this.date,
       type: type ?? this.type,
       category: category ?? this.category,
       sum: sum ?? this.sum,

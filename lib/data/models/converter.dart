@@ -5,6 +5,7 @@ class Converter {
   static Operation fromDto(OperationDto dto) {
     return Operation(
       id: dto.id,
+      date: dto.date,
       type: const TypeConverter().fromJson(dto.type),
       category: dto.category,
       sum: dto.sum,
@@ -15,6 +16,7 @@ class Converter {
   static OperationDto toDto(Operation operation) {
     return OperationDto(
       operation.id,
+      operation.date,
       const TypeConverter().toJson(operation.type),
       operation.category,
       operation.sum,

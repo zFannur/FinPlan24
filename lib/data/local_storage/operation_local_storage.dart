@@ -21,7 +21,16 @@ class RealmOperationLocalStorage implements OperationLocalStorageInterface {
   }
 
   void _deleteValue(OperationDto operationDto) {
-    _realm.write(() => _realm.delete(operationDto));
+    _realm.write(() {
+        // Ищем операцию по ее id
+        var operation = _realm.find<OperationDto>(operationDto.id);
+
+        // Проверяем, что операция с таким id существует
+        if (operation != null) {
+          // Удаляем операцию из базы данных
+          _realm.delete(operation);
+        }
+    });
   }
 
   void _init() {
