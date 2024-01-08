@@ -18,7 +18,7 @@ class OperationsPerDay extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: AppPadding.v10h20,
+          padding: AppPadding.v8h20,
           color: AppColors.greyDark,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

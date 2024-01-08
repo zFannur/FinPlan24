@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:finplan24/app/app.dart';
-import 'package:finplan24/data/data.dart';
 import 'package:finplan24/presentation/feature/operation/operation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,22 +10,8 @@ class OperationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => OperationBloc(
-        operationsRepository: context.read<OperationsRepository>(),
-      )..add(OperationSubscriptionRequested()),
-      child: const OperationsView(),
-    );
-  }
-}
-
-class OperationsView extends StatelessWidget {
-  const OperationsView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      body: OperationsBuilder(),
+      body: const OperationsBuilder(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.pushRoute(

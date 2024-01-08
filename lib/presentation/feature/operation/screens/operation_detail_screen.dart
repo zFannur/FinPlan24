@@ -3,7 +3,6 @@ import 'package:finplan24/app/app.dart';
 import 'package:finplan24/domain/domain.dart';
 import 'package:finplan24/presentation/feature/operation/operation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum OperationType {
   date,
@@ -45,8 +44,8 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
 
   @override
   void initState() {
-    //context.read<OperationCubit>().getOperation();
-    controllerDate.text = widget.operation?.date.toString() ?? DateTime.now().toString();
+    controllerDate.text =
+        widget.operation?.date.toString() ?? DateTime.now().toString();
     type = widget.operation?.type ?? Type.expense;
     if (widget.operation != null) {
       controllerCategory.text = widget.operation?.category ?? "";
@@ -68,9 +67,12 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //final categoriesCubit = context.read<CategoriesCubit>();
     return Scaffold(
-      appBar: AppAppBar(name: widget.title),
+      appBar: AppAppBar(
+        name: widget.title,
+        withArrowBack: true,
+        withSettings: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -110,7 +112,7 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8),
                         child: InkWell(
                           onTap: () {
                             type = Type.income;
@@ -133,8 +135,8 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                       ),
                     ],
                   ),
-                  CustomTextFormField(
-                    hintText: 'Категория *',
+                  DialogTextFormField(
+                    type: CategoryType.category,
                     labelText: 'Направление операции',
                     controller: controllerCategory,
                     validator: emptyValidator,
@@ -145,8 +147,8 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                     controller: controllerSum,
                     validator: emptyValidator,
                   ),
-                  CustomTextFormField(
-                    hintText: 'Подкатегория *',
+                  DialogTextFormField(
+                    type: CategoryType.subCategory,
                     labelText: 'Дополнительно об операции',
                     controller: controllerUnderCategory,
                     validator: emptyValidator,
@@ -154,10 +156,25 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
                 ],
               ),
             ),
-            CustomTextFormField(
-              hintText: 'Примечание',
-              labelText: 'Для чего?',
-              controller: controllerNote,
+            Padding(
+              padding: AppPadding.v8h40,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Заметка',
+                    style: AppTextStyle.bold24,
+                  ),
+                  Padding(
+                    padding: AppPadding.top8,
+                    child: AppTextField(
+                      maxLines: 3,
+                      labelText: 'Для чего?',
+                      controller: controllerNote,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -183,7 +200,8 @@ class _OperationDetailScreenState extends State<OperationDetailScreen> {
               if (formKey.currentState?.validate() == true) {
                 widget.onTap(Operation(
                   id: widget.operation?.id,
-                  date: DateTime.tryParse(controllerDate.text) ?? DateTime.now(),
+                  date:
+                      DateTime.tryParse(controllerDate.text) ?? DateTime.now(),
                   type: type,
                   category: controllerCategory.text,
                   sum: int.parse(controllerSum.text),

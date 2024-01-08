@@ -35,7 +35,7 @@ class OperationsFiltered {
 
   static List<OperationsFiltered> sortByDay(List<Operation> operations) {
     // Сортировка списка операций по дате
-    operations.sort((a, b) => a.date.compareTo(b.date));
+    operations.sort((a, b) => b.date.compareTo(a.date));
 
 // Группировка операций по дням
     var groupedOperations = <String, List<Operation>>{};

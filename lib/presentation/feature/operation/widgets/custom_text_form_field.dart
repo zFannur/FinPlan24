@@ -1,31 +1,33 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:finplan24/app/app.dart';
+import 'package:finplan24/domain/domain.dart';
+import 'package:finplan24/presentation/feature/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({
-    required this.hintText,
+class DialogTextFormField extends StatelessWidget {
+  const DialogTextFormField({
     required this.labelText,
     required this.controller,
+    required this.type,
     super.key,
     this.validator,
   });
 
-  final String hintText;
   final String labelText;
   final TextEditingController controller;
   final String? Function(String? value)? validator;
+  final CategoryType type;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: AppPadding.v10h40,
+      padding: AppPadding.v8h40,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            hintText,
+            type.toStr(),
             style: AppTextStyle.bold24,
           ),
           Padding(
@@ -35,7 +37,7 @@ class CustomTextFormField extends StatelessWidget {
               validator: validator,
               labelText: labelText,
               onTap: () {
-                //context.read<CategoriesCubit>().getCategories(categoriesKey);
+                context.read<CategoriesCubit>().getAllCategories();
                 _showBottomSheet(context);
               },
             ),
@@ -46,7 +48,7 @@ class CustomTextFormField extends StatelessWidget {
   }
 
   void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       useSafeArea: true,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -56,7 +58,9 @@ class CustomTextFormField extends StatelessWidget {
           margin: const EdgeInsets.only(top: 60),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+              topRight: Radius.circular(20),
+              topLeft: Radius.circular(20),
+            ),
             color: AppColors.black,
           ),
           child: Column(
@@ -76,6 +80,10 @@ class CustomTextFormField extends StatelessWidget {
                   AppButton(
                     onPressed: () {
                       if (controller.text.isNotEmpty) {
+                        context.read<CategoriesCubit>().addCategories(
+                              category: controller.text,
+                              type: type,
+                            );
                         context.popRoute();
                       }
                     },
@@ -87,67 +95,73 @@ class CustomTextFormField extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: AppPadding.v10h20,
+                padding: AppPadding.v8h20,
                 child: AppTextField(
+                  autofocus: true,
                   controller: controller,
-                  labelText: labelText,
+                  labelText: type.toStr(),
                   onChanged: (value) {
                     if (value.isEmpty) {
-                      // context
-                      //     .read<CategoriesCubit>()
-                      //     .getCategories(categoriesKey);
+                      context.read<CategoriesCubit>().getAllCategories();
                     } else {
-                      // context
-                      //     .read<CategoriesCubit>()
-                      //     .searchCategories(categoriesKey, value);
+                      context.read<CategoriesCubit>().searchCategories(value);
                     }
                   },
                 ),
               ),
-              // BlocBuilder<CategoriesCubit, CategoriesState>(
-              //   builder: (context, state) {
-              //     return state.maybeWhen(
-              //       loaded: (List<dynamic> list) => Expanded(
-              //         child: SingleChildScrollView(
-              //           padding: const EdgeInsets.symmetric(horizontal: 5),
-              //           child: Wrap(
-              //             children: List.generate(
-              //               list.length,
-              //               (index) {
-              //                 return Padding(
-              //                   padding:
-              //                       const EdgeInsets.symmetric(horizontal: 5),
-              //                   child: AppButton(
-              //                     isFixedSize: false,
-              //                     onPressed: () {
-              //                       controller.text = list[index];
-              //                       context.popRoute();
-              //                     },
-              //                     child: Text(
-              //                       list[index],
-              //                       style: AppTextStyle.medium14,
-              //                     ),
-              //                   ),
-              //                 );
-              //               },
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //       loading: () => const AppLoader(),
-              //       error: (error) => Text(
-              //         error.toString(),
-              //         style: AppTextStyle.mediumRed20,
-              //       ),
-              //       orElse: () {
-              //         return const Text(
-              //           'Что то пошло не так',
-              //           style: AppTextStyle.bold24,
-              //         );
-              //       },
-              //     );
-              //   },
-              // ),
+              BlocBuilder<CategoriesCubit, CategoriesState>(
+                builder: (context, state) {
+                  final isEmpty = type == CategoryType.category
+                      ? state.categories.isEmpty
+                      : state.subCategoriesName.isEmpty;
+
+                  if (isEmpty) {
+                    if (state.status == CategoriesStatus.loading) {
+                      return const AppLoader();
+                    } else if (state.status != CategoriesStatus.success) {
+                      return const SizedBox();
+                    } else {
+                      return const Center(
+                        child: Text(
+                          'нет категорий',
+                          style: AppTextStyle.bold24,
+                        ),
+                      );
+                    }
+                  }
+
+                  final list = type == CategoryType.category
+                      ? state.categoriesName
+                      : state.subCategoriesName;
+                  return Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Wrap(
+                        children: List.generate(
+                          list.length,
+                          (index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              child: AppButton(
+                                isFixedSize: false,
+                                onPressed: () {
+                                  controller.text = list[index];
+                                  context.popRoute();
+                                },
+                                child: Text(
+                                  list[index],
+                                  style: AppTextStyle.medium14,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         );
@@ -156,14 +170,28 @@ class CustomTextFormField extends StatelessWidget {
   }
 }
 
+extension on CategoryType {
+  String toStr() {
+    switch (this) {
+      case CategoryType.category:
+        return 'Категории';
+      case CategoryType.subCategory:
+        return 'Подкатегории';
+      default:
+        throw Exception(['Ошибка преобразования данных']);
+    }
+  }
+}
+
 class SumFieldWidget extends StatelessWidget {
   const SumFieldWidget({
-    Key? key,
     required this.hintText,
     required this.labelText,
     required this.controller,
     required this.validator,
-  }) : super(key: key);
+    super.key,
+  });
+
   final String hintText;
   final String labelText;
   final TextEditingController controller;
@@ -172,7 +200,7 @@ class SumFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: AppPadding.v10h40,
+      padding: AppPadding.v8h40,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -197,24 +225,25 @@ class SumFieldWidget extends StatelessWidget {
 
 class DataFieldWidget extends StatelessWidget {
   const DataFieldWidget({
-    Key? key,
     required this.hintText,
     required this.labelText,
     required this.controller,
     required this.validator,
-  }) : super(key: key);
+    super.key,
+  });
+
   final String hintText;
   final String labelText;
   final TextEditingController controller;
   final String? Function(String? value) validator;
 
   Future<DateTime> selectDate(BuildContext context) async {
-    DateTime selectedDate = DateTime.now();
+    var selectedDate = DateTime.now();
     final selected = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2037),
+      lastDate: DateTime(2100),
     );
 
     if (selected != null && selected != selectedDate) {
@@ -230,7 +259,7 @@ class DataFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: AppPadding.v10h40,
+      padding: AppPadding.v8h40,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -246,7 +275,7 @@ class DataFieldWidget extends StatelessWidget {
               validator: validator,
               labelText: labelText,
               onTap: () async {
-                DateTime date = await selectDate(context);
+                final date = await selectDate(context);
                 controller.text = date.toString();
               },
             ),

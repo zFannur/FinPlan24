@@ -3,33 +3,54 @@ import 'package:finplan24/app/app.dart';
 import 'package:flutter/material.dart';
 
 class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String name;
-  final bool? withSettings;
-
   const AppAppBar({
+    required this.name,
     super.key,
-    required this.name, this.withSettings,
+    this.withSettings = false,
+    this.withArrowBack = false,
+    this.withAccount = false,
   });
+
+  final String name;
+  final bool withSettings;
+  final bool withArrowBack;
+  final bool withAccount;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: IconButton(
-        onPressed: () {
-          context.popRoute();
-        },
-        icon: AppIcons.arrowBack,
+      leading: Visibility(
+        visible: withArrowBack,
+        child: IconButton(
+          onPressed: () {
+            context.popRoute();
+          },
+          icon: AppIcons.arrowBack,
+        ),
       ),
       centerTitle: true,
       title: Text(name),
-      actions: (withSettings ?? true) ? [
-        IconButton(
-          onPressed: () {
-            // context.pushRoute(const SettingsRoute());
-          },
-          icon: AppIcons.settings,
-        )
-      ] : [],
+      actions: [
+        Visibility(
+          visible: withAccount,
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.person,
+              color: AppColors.orange,
+            ),
+          ),
+        ),
+        Visibility(
+          visible: withSettings,
+          child: IconButton(
+            onPressed: () {
+              context.pushRoute(const SettingsRoute());
+            },
+            icon: AppIcons.settings,
+          ),
+        ),
+      ],
     );
   }
 

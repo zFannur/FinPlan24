@@ -20,6 +20,10 @@ dependencies:
   rxdart: ^0.27.5
   realm: ^1.6.1
   auto_route: ^7.8.4
+  csv: ^5.1.1
+  file_picker: ^3.0.0
+  hydrated_bloc: ^9.1.2
+  path_provider: ^2.1.1
 
 dev_dependencies:
   bloc_test: ^9.1.4

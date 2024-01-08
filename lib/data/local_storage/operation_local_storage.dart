@@ -22,14 +22,14 @@ class RealmOperationLocalStorage implements OperationLocalStorageInterface {
 
   void _deleteValue(OperationDto operationDto) {
     _realm.write(() {
-        // Ищем операцию по ее id
-        var operation = _realm.find<OperationDto>(operationDto.id);
+      // Ищем операцию по ее id
+      final operation = _realm.find<OperationDto>(operationDto.id);
 
-        // Проверяем, что операция с таким id существует
-        if (operation != null) {
-          // Удаляем операцию из базы данных
-          _realm.delete(operation);
-        }
+      // Проверяем, что операция с таким id существует
+      if (operation != null) {
+        // Удаляем операцию из базы данных
+        _realm.delete(operation);
+      }
     });
   }
 
@@ -83,5 +83,27 @@ class RealmOperationLocalStorage implements OperationLocalStorageInterface {
 
     _operationStreamController.add(operations);
     return _deleteValue(operationDto);
+  }
+
+  @override
+  Future<void> addFromFile(
+    List<OperationDto> operation, {
+    bool delete = true,
+  }) async {
+    var operations = [...operation];
+    if (delete) {
+      operations = operation;
+    }
+
+    _operationStreamController.add(operations);
+    return _realm.write(() {
+      if (delete) {
+        _realm
+          ..deleteAll<OperationDto>()
+          ..addAll(operations);
+      } else {
+        _realm.addAll(operations);
+      }
+    });
   }
 }

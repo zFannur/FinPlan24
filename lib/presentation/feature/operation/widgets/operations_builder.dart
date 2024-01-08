@@ -65,7 +65,7 @@ class _OperationsBuilderState extends State<OperationsBuilder> {
         Visibility(
           visible: _currentPage == PageType.search,
           child: Padding(
-            padding: AppPadding.v10h40,
+            padding: AppPadding.v8h40,
             child: AppTextField(
               labelText: 'Поиск',
               onChanged: (query) {
@@ -112,7 +112,7 @@ class _OperationsBuilderState extends State<OperationsBuilder> {
               return Column(
                 children: [
                   Container(
-                    padding: AppPadding.v10h20,
+                    padding: AppPadding.v8h20,
                     color: AppColors.greyDark,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,

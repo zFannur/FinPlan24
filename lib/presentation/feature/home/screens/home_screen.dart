@@ -16,7 +16,10 @@ class HomeScreen extends StatelessWidget {
       builder: (context, child) {
         final tabsRouter = AutoTabsRouter.of(context);
         return Scaffold(
-          appBar: const AppAppBar(name: 'Финансы'),
+          appBar: const AppAppBar(
+            name: 'Финансы',
+            withSettings: true,
+          ),
           body: child,
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: tabsRouter.activeIndex,

@@ -6,6 +6,7 @@ abstract interface class OperationLocalStorageInterface {
   Future<void> addOperation(OperationDto operation);
   Future<void> updateOperation(OperationDto operation);
   Future<void> deleteOperation(OperationDto operationDto);
+  Future<void> addFromFile(List<OperationDto> operation, {bool delete = true});
 }
 
 class OperationNotFoundException implements Exception {}

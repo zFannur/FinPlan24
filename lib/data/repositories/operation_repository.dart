@@ -35,4 +35,9 @@ class OperationsRepository implements OperationsRepositoryInterface {
   Future<void> deleteOperation(Operation operation) {
     return _localStorage.deleteOperation(Converter.toDto(operation));
   }
+
+  @override
+  Future<void> addFromFile(List<Operation> operation, {bool delete = true}) {
+    return _localStorage.addFromFile(operation.map(Converter.toDto).toList());
+  }
 }

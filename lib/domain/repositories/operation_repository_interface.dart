@@ -6,4 +6,5 @@ abstract interface class OperationsRepositoryInterface {
   Future<void> addOperation(Operation operation);
   Future<void> updateOperation(Operation operation);
   Future<void> deleteOperation(Operation operation);
+  Future<void> addFromFile(List<Operation> operation, {bool delete = true});
 }
