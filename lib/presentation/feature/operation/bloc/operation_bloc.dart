@@ -14,10 +14,12 @@ class OperationBloc extends Bloc<OperationEvent, OperationState> {
   })  : _operationsRepository = operationsRepository,
         super(const OperationState()) {
     on<OperationSubscriptionRequested>(_onSubscriptionRequested);
+    on<OperationSearchRequested>(_onOperationSearchRequested);
     on<OperationAdded>(_onOperationAdded);
     on<OperationUpdated>(_onOperationUpdated);
     on<OperationDeleted>(_onOperationDeleted);
     on<OperationFilterChanged>(_onFilterChanged);
+
   }
 
   final OperationsRepositoryInterface _operationsRepository;
@@ -42,23 +44,24 @@ class OperationBloc extends Bloc<OperationEvent, OperationState> {
   }
 
   Future<void> _onOperationSearchRequested(
-      OperationSearchRequested event,
-      Emitter<OperationState> emit,
-      ) async {
-    await _operationsRepository.searchOperations(event.searchWord);
+    OperationSearchRequested event,
+    Emitter<OperationState> emit,
+  ) async {
+    //await _operationsRepository.searchOperations(event.searchWord);
+    emit(state.copyWith(searchWord: () => event.searchWord));
   }
 
   Future<void> _onOperationAdded(
-      OperationAdded event,
-      Emitter<OperationState> emit,
-      ) async {
+    OperationAdded event,
+    Emitter<OperationState> emit,
+  ) async {
     await _operationsRepository.addOperation(event.operation);
   }
 
   Future<void> _onOperationUpdated(
-      OperationUpdated event,
-      Emitter<OperationState> emit,
-      ) async {
+    OperationUpdated event,
+    Emitter<OperationState> emit,
+  ) async {
     await _operationsRepository.updateOperation(event.operation);
   }
 

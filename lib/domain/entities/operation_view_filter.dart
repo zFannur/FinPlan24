@@ -1,24 +1,50 @@
 import 'package:finplan24/domain/domain.dart';
 import 'package:intl/intl.dart';
 
-enum OperationViewFilter { all, activeOnly, completedOnly }
+final class OperationViewFilter {
+  const OperationViewFilter({
+    this.type,
+    this.category,
+    this.sum,
+    this.subCategory,
+  });
 
-extension OperationViewFilterX on OperationViewFilter {
-  bool apply(Operation operation) {
-    switch (this) {
-      case OperationViewFilter.all:
-        return true;
-      case OperationViewFilter.activeOnly:
-        return true;
-      case OperationViewFilter.completedOnly:
-        return true;
-    }
-  }
+  final Type? type;
+  final String? category;
+  final int? sum;
+  final String? subCategory;
 
-  Iterable<Operation> applyAll(Iterable<Operation> operation) {
-    return operation.where(apply);
+  OperationViewFilter copyWith({
+    Type? type,
+    String? category,
+    int? sum,
+    String? subCategory,
+  }) {
+    return OperationViewFilter(
+      type: type ?? this.type,
+      category: category ?? this.category,
+      sum: sum ?? this.sum,
+      subCategory: subCategory ?? this.subCategory,
+    );
   }
 }
+
+// extension OperationViewFilterX on OperationViewFilter {
+//   bool apply(Operation operation) {
+//     switch (this) {
+//       case OperationViewFilter.all:
+//         return true;
+//       case OperationViewFilter.activeOnly:
+//         return true;
+//       case OperationViewFilter.completedOnly:
+//         return true;
+//     }
+//   }
+//
+//   Iterable<Operation> applyAll(Iterable<Operation> operation) {
+//     return operation.where(apply);
+//   }
+// }
 
 class OperationsFiltered {
   OperationsFiltered({
@@ -33,14 +59,59 @@ class OperationsFiltered {
   DateTime date;
   List<Operation> operationsPerDay;
 
-  static List<OperationsFiltered> sortByDay(List<Operation> operations) {
+  static int getSumIncome(
+      List<Operation> operations,
+      String? searchWord,
+      ) {
+    List<Operation> filteredOperations = _searchOperations(operations, searchWord);
+    final sumIncome = filteredOperations
+        .where((o) => o.type == Type.income)
+        .fold(0, (a, b) => a + b.sum);
+    return sumIncome;
+  }
+
+  static int getSumExpense(
+      List<Operation> operations,
+      String? searchWord,
+      ) {
+    List<Operation> filteredOperations = _searchOperations(operations, searchWord);
+    final sumExpense = filteredOperations
+        .where((o) => o.type == Type.expense)
+        .fold(0, (a, b) => a + b.sum);
+    return sumExpense;
+  }
+
+  static List<Operation> _searchOperations(
+      List<Operation> operations,
+      String? searchWord,
+      ) {
+    if (searchWord != null) {
+      return operations
+          .where(
+            (element) =>
+        element.category.contains(searchWord) ||
+            element.sum.toString().contains(searchWord) ||
+            element.subCategory.contains(searchWord),
+      )
+          .toList();
+    } else {
+      return operations;
+    }
+  }
+
+  static List<OperationsFiltered> sortByDay(
+    List<Operation> operations,
+    String? searchWord,
+  ) {
+    List<Operation> filteredOperations = _searchOperations(operations, searchWord);
+
     // Сортировка списка операций по дате
-    operations.sort((a, b) => b.date.compareTo(a.date));
+    filteredOperations.sort((a, b) => b.date.compareTo(a.date));
 
 // Группировка операций по дням
     var groupedOperations = <String, List<Operation>>{};
-    for (var operation in operations) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(operation.date);
+    for (final operation in filteredOperations) {
+      final formattedDate = DateFormat('yyyy-MM-dd').format(operation.date);
       if (!groupedOperations.containsKey(formattedDate)) {
         groupedOperations[formattedDate] = [];
       }
@@ -48,18 +119,24 @@ class OperationsFiltered {
     }
 
 // Создание списка OperationsFiltered с операциями для каждого дня
-    List<OperationsFiltered> filteredOperationsList = [];
-    groupedOperations.forEach((dateString, operations) {
-      var date = DateFormat('yyyy-MM-dd').parse(dateString);
-      var sumIncome = operations.where((o) => o.type == Type.income).fold(0, (a, b) => a + b.sum);
-      var sumExpense = operations.where((o) => o.type == Type.expense).fold(0, (a, b) => a + b.sum);
+    final filteredOperationsList = <OperationsFiltered>[];
+    groupedOperations.forEach((dateString, filteredOperations) {
+      final date = DateFormat('yyyy-MM-dd').parse(dateString);
+      final sumIncome = filteredOperations
+          .where((o) => o.type == Type.income)
+          .fold(0, (a, b) => a + b.sum);
+      final sumExpense = filteredOperations
+          .where((o) => o.type == Type.expense)
+          .fold(0, (a, b) => a + b.sum);
 
-      filteredOperationsList.add(OperationsFiltered(
-        date: date,
-        sumIncome: sumIncome,
-        sumExpense: sumExpense,
-        operationsPerDay: operations,
-      ));
+      filteredOperationsList.add(
+        OperationsFiltered(
+          date: date,
+          sumIncome: sumIncome,
+          sumExpense: sumExpense,
+          operationsPerDay: filteredOperations,
+        ),
+      );
     });
 
     return filteredOperationsList;

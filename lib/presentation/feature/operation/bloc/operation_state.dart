@@ -6,7 +6,7 @@ final class OperationState extends Equatable {
   const OperationState({
     this.status = OperationStatus.initial,
     this.operations = const [],
-    this.filter = OperationViewFilter.all,
+    this.filter,
     this.searchWord,
     this.error,
     this.foundOperations = const [],
@@ -14,13 +14,18 @@ final class OperationState extends Equatable {
 
   final OperationStatus status;
   final List<Operation> operations;
-  final OperationViewFilter filter;
+  final OperationViewFilter? filter;
   final String? searchWord;
   final String? error;
   final List<Operation> foundOperations;
 
   List<OperationsFiltered> get filteredOperations =>
-      OperationsFiltered.sortByDay(operations);
+      OperationsFiltered.sortByDay(operations, searchWord);
+
+  int get sumExpense =>
+      OperationsFiltered.getSumExpense(operations, searchWord);
+
+  int get sumIncome => OperationsFiltered.getSumIncome(operations, searchWord);
 
   OperationState copyWith({
     OperationStatus Function()? status,

@@ -96,6 +96,7 @@ class _PreloadDataScreen extends StatelessWidget {
       appBar: const AppAppBar(
         name: 'Содержание',
         withSettings: false,
+        withArrowBack: true,
       ),
       body: ListView.builder(
         itemCount: data.length,
