@@ -68,7 +68,7 @@ class ImportExportWidget extends StatelessWidget {
           onPressed: () async {
             final navigator = Navigator.of(context);
             final data =
-                await context.read<SettingsCubit>().loadCsvFromStorage();
+                await context.read<SettingsCubit>().importOperationsFromExcel();
             await navigator.push(
               MaterialPageRoute<_PreloadDataScreen>(
                 builder: (context) => _PreloadDataScreen(data: data),

@@ -10,7 +10,14 @@ class TypeConverter extends JsonConverter<Type, String> {
 
   @override
   Type fromJson(String json) {
-    return json == 'expense' ? Type.expense : Type.income;
+    final result = switch(json) {
+      'expense' => Type.expense,
+      'income' => Type.income,
+      'Расход' => Type.expense,
+      'Доход' => Type.income,
+      String() => Type.expense,
+    };
+    return result;
   }
 
   @override

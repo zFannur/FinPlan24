@@ -14,8 +14,10 @@ class OperationsBuilder extends StatelessWidget {
         Row(
           children: [
             IconButton(
-                onPressed: () {},
-                icon: Icon(
+                onPressed: () {
+                  // TO:DO сделать фильтр по категориям
+                },
+                icon: const Icon(
                   Icons.filter_alt_rounded,
                   color: AppColors.orange,
                 )),

@@ -19,13 +19,12 @@ class HomeScreen extends StatelessWidget {
           appBar: const AppAppBar(
             name: 'Финансы',
             withSettings: true,
+            withAccount: true,
           ),
           body: child,
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: tabsRouter.activeIndex,
-            onTap: (index) {
-              tabsRouter.setActiveIndex(index);
-            },
+            onTap: tabsRouter.setActiveIndex,
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             items: const [
               BottomNavigationBarItem(
@@ -42,38 +41,4 @@ class HomeScreen extends StatelessWidget {
       },
     );
   }
-}
-
-List<Widget> _actions() {
-  return [
-    Stack(
-      children: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.downloading),
-        ),
-        Positioned(
-          left: 25,
-          top: 5,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.orange,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            alignment: Alignment.center,
-            height: 18,
-            width: 18,
-            child: const Text(
-              '9',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  ];
 }
